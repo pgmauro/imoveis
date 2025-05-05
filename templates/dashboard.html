@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Imóveis</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .reajuste-alerta {
+            color: red;
+            font-weight: bold;
+        }
+        .botoes {
+            display: flex;
+            gap: 10px;
+        }
+        .botao {
+            padding: 6px 12px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .botao.excluir {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <h1>Meus Imóveis</h1>
+
+    <a href="{{ url_for('add_imovel') }}" class="botao">Adicionar Novo Imóvel</a>
+    <a href="{{ url_for('logout') }}" class="botao" style="background-color: gray;">Sair</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Endereço</th>
+                <th>Aluguel (R$)</th>
+                <th>Início Contrato</th>
+                <th>Fim Contrato</th>
+                <th>Mês Reajuste</th>
+                <th>Último Reajuste</th>
+                <th>Reajuste</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for imovel in imoveis %}
+            <tr>
+                <td>{{ imovel.endereco }}</td>
+                <td>{{ "%.2f"|format(imovel.aluguel) }}</td>
+                <td>{{ imovel.inicio_contrato or '-' }}</td>
+                <td>{{ imovel.fim_contrato or '-' }}</td>
+                <td>{{ imovel.mes_reajuste or '-' }}</td>
+                <td>{{ imovel.data_ultimo_reajuste or '-' }}</td>
+                <td>
+                    {% if imovel.reajuste_aviso %}
+                        <span class="reajuste-alerta">[REAJUSTE PENDENTE]</span>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td class="botoes">
+                    <a href="{{ url_for('edit_imovel', id=imovel.id) }}" class="botao">Editar</a>
+                    <a href="{{ url_for('delete_imovel', id=imovel.id) }}" class="botao excluir" onclick="return confirm('Deseja realmente excluir este imóvel?');">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
